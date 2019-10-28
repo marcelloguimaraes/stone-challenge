@@ -74,6 +74,11 @@ namespace StoneChallenge.Bank.API.Controllers
                     return BadRequest(ModelState);
                 }
 
+                if(transferViewModel.SourceAccount.AccountNumber == transferViewModel.TargetAccount.AccountNumber)
+                {
+                    return BadRequest("Não é permitido transferir para mesma conta");
+                }
+
                 var (sourceAccountModel, targetAccountModel) = (transferViewModel.SourceAccount, transferViewModel.TargetAccount);
 
                 var sourceAccount = await _accountAppService.GetByAccountNumberAndAgencyAsync(sourceAccountModel.AccountNumber, sourceAccountModel.Agency);

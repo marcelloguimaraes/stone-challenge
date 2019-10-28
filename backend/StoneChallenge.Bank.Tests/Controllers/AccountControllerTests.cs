@@ -34,6 +34,28 @@ namespace StoneChallenge.Bank.Tests
         }
 
         [Fact]
+        public async Task Transfer_Given_TransferingToSameAccount_Then_ReturnBadRequestObjectResult()
+        {
+            // Arrange
+            //var mockService = new Mock<IAccountAppService>();
+            var controller = new AccountController(null);
+            //controller.ModelState.AddModelError("TransferViewModelInvalid", "Informe um modelo válido");
+
+            var transferViewModel = new TransferViewModel()
+            {
+                SourceAccount = new SourceAccountViewModel() { AccountNumber = 1},
+                TargetAccount = new TargetAccountViewModel() { AccountNumber = 1}
+            };
+
+            //Act
+            var result = await controller.Transfer(transferViewModel);
+
+            // Assert
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal("Não é permitido transferir para mesma conta", badRequestResult.Value);
+        }
+
+        [Fact]
         public async Task Transfer_ReturnOkObjectResult_When_ModelIsValid()
         {
             // Arrange
