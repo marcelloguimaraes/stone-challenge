@@ -28,7 +28,7 @@
         >R$ {{balance}}</span>
       </v-card-text>
       <v-row justify="center">
-        <v-dialog v-model="dialog" max-width="500">
+        <v-dialog v-model="dialog" :max-width="operation.type === 'statement' ? 500 : 300">
           <template v-slot:activator="{ on }">
             <v-card-actions>
               <v-btn
@@ -56,18 +56,18 @@
           </template>
           <v-card>
             <v-card-title class="headline">{{ operation.name }}</v-card-title>
-            <v-form v-show="operation.type !== 'statement'">
-              <div v-show="operation.type === 'transfer'">
+            <v-form v-if="operation.type !== 'statement'">
+              <div v-if="operation.type === 'transfer'">
                 <v-text-field
                   type="number"
                   min="1"
                   max="9999"
                   maxlength="4"
                   label="Agência"
-                  v-model="targetAccount.agency"
-                  :error-messages="targetAccountErrors"
-                  @input="$v.value.$touch()"
-                  @blur="$v.value.$touch()"
+                  v-model="targetAccountAgency"
+                  :error-messages="targetAccountAgencyErrors"
+                  @input="$v.targetAccountAgency.$touch"
+                  @blur="$v.targetAccountAgency.$touch"
                 ></v-text-field>
                 <v-text-field
                   type="number"
@@ -75,10 +75,10 @@
                   max="999999"
                   maxlength="6"
                   label="Conta"
-                  v-model="targetAccount.accountNumber"
-                  :error-messages="targetAccountErrors"
-                  @input="$v.value.$touch()"
-                  @blur="$v.value.$touch()"
+                  v-model="targetAccountNumber"
+                  :error-messages="targetAccountNumberErrors"
+                  @input="$v.targetAccountNumber.$touch"
+                  @blur="$v.targetAccountNumber.$touch"
                 ></v-text-field>
               </div>
               <v-text-field
@@ -87,11 +87,10 @@
                 label="Valor"
                 prefix="R$"
                 :error-messages="valueErrors"
-                @input="$v.value.$touch()"
-                @blur="$v.value.$touch()"
+                @blur="$v.value.$touch"
               ></v-text-field>
             </v-form>
-            <v-simple-table height="400px" fixed-header v-show="operation.type === 'statement'">
+            <v-simple-table height="400px" fixed-header v-if="operation.type === 'statement'">
               <template v-slot:default>
                 <thead>
                   <tr>
@@ -114,11 +113,11 @@
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn
-                v-show="operation.type !== 'statement'"
+                v-if="operation.type !== 'statement'"
                 color="green darken-1"
                 text
                 @click="submitOperation(operation.type)"
-                :disabled="$v.$invalid"
+                :disabled="$v.value.$invalid"
               >{{ operation.buttonText }}</v-btn>
               <v-btn color="red darken-1" text @click="dialog = false">Fechar</v-btn>
             </v-card-actions>
@@ -144,24 +143,39 @@ export default {
     valueErrors() {
       let errors = [];
       if (!this.$v.value.$dirty) return errors;
-      // !this.$v.value.value && errors.push("Digite um valor válido");
       !this.$v.value.required && errors.push("Valor é obrigatório");
       !this.$v.value.validValue && errors.push("Digite um valor válido");
       return errors;
     },
-    targetAccountErrors() {
+    targetAccountNumberErrors() {
       let errors = [];
-      if (!this.$v.value.$dirty) return errors;
-      // !this.$v.value.value && errors.push("Digite um valor válido");
-      !this.$v.targetAccount.required && errors.push("Valor é obrigatório");
-      !this.$v.targetAccount.validValue &&
+      if (!this.$v.targetAccountNumber.$dirty) return errors;
+      !this.$v.targetAccountNumber.required &&
+        errors.push("Valor é obrigatório");
+      !this.$v.targetAccountNumber.validValue &&
+        errors.push("Digite um valor válido");
+      return errors;
+    },
+    targetAccountAgencyErrors() {
+      let errors = [];
+      if (!this.$v.targetAccountAgency.$dirty) return errors;
+      !this.$v.targetAccountAgency.required &&
+        errors.push("Valor é obrigatório");
+      !this.$v.targetAccountAgency.validValue &&
         errors.push("Digite um valor válido");
       return errors;
     }
   },
   validations: {
     value: { required, validValue },
-    targetAccount: { required, validValue }
+    targetAccountNumber: {
+      required,
+      validValue
+    },
+    targetAccountAgency: {
+      required,
+      validValue
+    }
   },
   data: () => ({
     snackbar: false,
@@ -171,7 +185,8 @@ export default {
 
     userId: localStorage.getItem("userId"),
     value: 0.0,
-    targetAccount: { accountNumber: 0, agency: 0 },
+    targetAccountNumber: 0,
+    targetAccountAgency: 0,
     account: {},
     transactions: [],
     dialog: false,
@@ -193,8 +208,8 @@ export default {
 
     cleanModel() {
       this.value = 0;
-      this.targetAccount.accountNumber = 0;
-      this.targetAccount.agency = 0;
+      this.targetAccountNumber = 0;
+      this.targetAccountAgency = 0;
     },
 
     getHeaders() {
@@ -206,6 +221,18 @@ export default {
 
     async submitOperation(operation) {
       try {
+        this.$v.$touch();
+
+        if (!this.$v.value.$invalid) {
+          if (
+            operation === "transfer" &&
+            (this.$v.targetAccountNumber.$invalid ||
+              this.$v.targetAccountAgency.$invalid)
+          ) {
+            return false;
+          }
+        }
+
         const headers = this.getHeaders();
         let url = "";
 
@@ -226,8 +253,8 @@ export default {
               agency: this.account.agency
             },
             targetAccount: {
-              accountNumber: this.targetAccount.accountNumber,
-              agency: this.targetAccount.agency
+              accountNumber: this.targetAccountNumber,
+              agency: this.targetAccountAgency
             },
             value: this.value
           };
@@ -237,11 +264,11 @@ export default {
 
         await this.getAccount();
 
-        this.cleanModel();
         this.dialog = false;
         this.snackbar = true;
         this.colorSnackBar = "success";
         this.textSnackBar = "Operação realizada com sucesso";
+        this.cleanModel();
       } catch (error) {
         this.snackbar = true;
         this.colorSnackBar = "red";
@@ -253,6 +280,8 @@ export default {
       }
     },
     async configureModal(operation) {
+      this.cleanModel();
+      this.$v.$reset();
       switch (operation) {
         case "withdraw":
           this.operation = {
@@ -270,7 +299,7 @@ export default {
           break;
         case "transfer":
           this.operation = {
-            name: "transferência",
+            name: "Transferência",
             buttonText: "Transferir",
             type: "transfer",
             value: this.value

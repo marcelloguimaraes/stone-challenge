@@ -14,3 +14,11 @@ export default {
   components: {}
 };
 </script>
+<style>
+form {
+  padding: 16px;
+}
+.v-card {
+  padding: 10px 0 10px 0;
+}
+</style>

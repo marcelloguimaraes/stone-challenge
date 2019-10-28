@@ -34,7 +34,7 @@
       </form>
       <p class="text-center">
         Não possui acesso?
-        <router-link to="register">Abra uma conta</router-link>
+        <router-link to="open-account">Abra uma conta</router-link>
       </p>
     </v-card>
   </v-container>
@@ -82,7 +82,9 @@ export default {
   methods: {
     async submit() {
       this.$v.$touch();
-      if (!this.$v.$invalid) {
+      if (this.$v.$invalid) {
+        return false;
+      }
         try {
           const response = await api.post("auth/login", {
             email: this.email,
@@ -94,8 +96,8 @@ export default {
           localStorage.setItem("email", response.data.user.email);
 
           //const { id } = response.data.user;
-          let userId = localStorage.getItem("userId");
-          this.$router.push({ name: "dashboard", params: { userId } });
+          //let userId = localStorage.getItem("userId");
+          this.$router.push({ name: "dashboard"});
         } catch (error) {
           this.snackbar = true;
           this.colorSnackBar = "red";
@@ -106,7 +108,6 @@ export default {
             this.textSnackBar = error;
           }
         }
-      }
     },
     clear() {
       this.$v.$reset();
@@ -118,12 +119,6 @@ export default {
 </script>
 
 <style scoped>
-form {
-  padding: 16px;
-}
-.v-card {
-  padding: 10px 0 10px 0;
-}
 a {
   text-decoration: none;
 }

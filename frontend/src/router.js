@@ -1,5 +1,6 @@
 import Login from "./components/Login.vue";
 import Dashboard from "./components/Dashboard.vue";
+import OpenAccount from "./components/OpenAccount.vue";
 import VueRouter from "vue-router";
 
 const routes = [
@@ -10,6 +11,12 @@ const routes = [
     component: Dashboard,
     meta: { requiresAuth: true },
     props: true
+  },
+  {
+    path: "/open-account",
+    name: "open-account",
+    component: OpenAccount,
+    meta: { guest: true }
   }
 ];
 
