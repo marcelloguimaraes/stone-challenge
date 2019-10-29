@@ -8,18 +8,20 @@ namespace StoneChallenge.Bank.Domain.Models
         public TransactionType TransactionType { get; set; }
         public DateTime Date { get; set; }
         public double Value { get; set; }
+        public string Note { get; set; }
         public string AccountId { get; set; }
         public virtual Account Account { get; set; }
 
         protected Transaction() { }
 
-        public Transaction(string transactionId, TransactionType transactionType, DateTime date, double value, string accountId)
+        public Transaction(string transactionId, TransactionType transactionType, DateTime date, double value, string accountId, string note = null)
         {
             TransactionId = transactionId;
             TransactionType = transactionType;
             Date = date;
             AccountId = accountId;
             Value = value;
+            Note = note;
         }
     }
 

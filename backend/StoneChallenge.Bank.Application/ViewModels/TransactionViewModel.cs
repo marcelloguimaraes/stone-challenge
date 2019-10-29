@@ -9,5 +9,6 @@ namespace StoneChallenge.Bank.Application.ViewModels
         public DateTime Date { get; set; }
         public string DateFormatted { get; set; }
         public double Value { get; set; }
+        public string Note { get; set; }
     }
 }

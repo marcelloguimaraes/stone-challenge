@@ -42,8 +42,8 @@ namespace StoneChallenge.Bank.Domain.Models
 
             double valueWithfee = value + _fee;
 
-            AddTransaction(new Transaction(Guid.NewGuid().ToString(), TransactionType.Transfer, DateTime.Now, valueWithfee * -1, AccountId));
-            targetAccount.AddTransaction(new Transaction(Guid.NewGuid().ToString(), TransactionType.Transfer, DateTime.Now, value, targetAccount.AccountId));
+            AddTransaction(new Transaction(Guid.NewGuid().ToString(), TransactionType.Transfer, DateTime.Now, valueWithfee * -1, AccountId, $"para a conta {targetAccount.AccountNumber}"));
+            targetAccount.AddTransaction(new Transaction(Guid.NewGuid().ToString(), TransactionType.Transfer, DateTime.Now, value, targetAccount.AccountId, $"recebida da conta {AccountNumber}"));
         }
 
         public void WithDraw(double value, bool isTransfering = false)

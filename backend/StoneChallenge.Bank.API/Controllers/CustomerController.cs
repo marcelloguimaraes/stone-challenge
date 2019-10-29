@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StoneChallenge.Bank.Application.Interfaces;
 using StoneChallenge.Bank.Application.ViewModels;
@@ -10,6 +11,7 @@ using StoneChallenge.Bank.Application.ViewModels;
 namespace StoneChallenge.Bank.API.Controllers
 {
     [Route("api/customers")]
+    [Authorize]
     [ApiController]
     public class CustomerController : ControllerBase
     {

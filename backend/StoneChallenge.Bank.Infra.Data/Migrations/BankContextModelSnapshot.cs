@@ -14,7 +14,7 @@ namespace StoneChallenge.Bank.Infra.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.2.3-servicing-35854");
+                .HasAnnotation("ProductVersion", "2.2.6-servicing-10079");
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
@@ -247,6 +247,9 @@ namespace StoneChallenge.Bank.Infra.Data.Migrations
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("TransactionType")
                         .IsRequired()

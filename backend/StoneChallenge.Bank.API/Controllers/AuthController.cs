@@ -25,6 +25,7 @@ namespace StoneChallenge.Bank.API.Controllers
         private readonly AuthSettings _authSettings;
         private readonly IMapper _mapper;
         private readonly IAccountAppService _accountAppService;
+        private readonly ICustomerAppService _customerAppService;
 
         public AuthController(SignInManager<IdentityUser> signInManager,
                               UserManager<IdentityUser> userManager,
@@ -42,22 +43,36 @@ namespace StoneChallenge.Bank.API.Controllers
         [HttpPost("open-account")]
         public async Task<ActionResult> OpenAccount(OpenAccountViewModel openAccount)
         {
-            if (!ModelState.IsValid) return BadRequest(ModelState.Values.SelectMany(e => e.Errors));
-
-            var identityUser = new IdentityUser
+            try
             {
-                UserName = openAccount.Email,
-                Email = openAccount.Email,
-                EmailConfirmed = true
-            };
+                if (!ModelState.IsValid) return BadRequest(ModelState.Values.SelectMany(e => e.Errors));
 
-            var result = await _userManager.CreateAsync(identityUser, openAccount.Password);
+                var identityUser = new IdentityUser
+                {
+                    UserName = openAccount.Email,
+                    Email = openAccount.Email,
+                    EmailConfirmed = true
+                };
 
-            if (!result.Succeeded) return BadRequest(result.Errors);
+                var customer = await _customerAppService.GetByCpf(openAccount.Customer.Cpf);
 
-            var account = await _accountAppService.RegisterAsync(openAccount);
+                if (customer != null)
+                {
+                    return Conflict("Já existe um cliente com o cpf informado");
+                }
 
-            return Ok(new { account.Agency, account.AccountNumber, message = "Conta aberta com sucesso" });
+                var result = await _userManager.CreateAsync(identityUser, openAccount.Password);
+
+                if (!result.Succeeded) return BadRequest(result.Errors.Select(i => i.Description));
+
+                var account = await _accountAppService.RegisterAsync(openAccount);
+
+                return Ok(new { account.Agency, account.AccountNumber, message = "Conta aberta com sucesso" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Erro ao abrir conta {ex.Message}");
+            }
         }
 
         [HttpPost("login")]

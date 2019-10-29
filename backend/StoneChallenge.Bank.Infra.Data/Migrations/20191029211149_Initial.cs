@@ -196,6 +196,7 @@ namespace StoneChallenge.Bank.Infra.Data.Migrations
                     TransactionType = table.Column<string>(type: "varchar(50)", nullable: false),
                     Date = table.Column<DateTime>(type: "datetime", nullable: false),
                     Value = table.Column<double>(type: "double", nullable: false),
+                    Note = table.Column<string>(type: "varchar(255)", nullable: true),
                     AccountId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>

@@ -7,25 +7,23 @@
       bottom
     >{{ textSnackBar }}</v-snackbar>
     <v-card class="mx-auto" max-width="400">
-      <v-card-title>
-        Bem-vindo, {{ account.customerName }}
+      <v-card-title class="d-flex justify-space-between">
+        Bem-vindo(a), {{ account.customerName }} :)
         <v-btn text color="red" @click="logOff">Sair</v-btn>
       </v-card-title>
       <v-card-text>
-        <p class="subtitle-1 font-regular">
-          saldo em conta
-          <a
-            class="text-center"
-            text
-            color="primary"
-            small
-            @click="configureModal('statement'); dialog = true"
-          >ver extrato</a>
-        </p>
-        <span
+        <span class="subtitle-1 font-regular">saldo em conta</span>
+        <a
+          class="seeStatement subtitle-1 font-weight-bold"
+          text
+          color="primary"
+          small
+          @click="configureModal('statement');"
+        >ver extrato</a>
+        <p
           class="subtitle-1"
           :class="account.balance >= 0 ? 'green--text' : 'red--text'"
-        >R$ {{balance}}</span>
+        >R$ {{balance}}</p>
       </v-card-text>
       <v-row justify="center">
         <v-dialog v-model="dialog" :max-width="operation.type === 'statement' ? 500 : 300">
@@ -94,18 +92,30 @@
               <template v-slot:default>
                 <thead>
                   <tr>
-                    <th class="text-left subtitle-2">Data Transação</th>
-                    <th class="text-left subtitle-2">Tipo</th>
-                    <th class="text-left subtitle-2">Valor</th>
+                    <th class="text-left subtitle-2">data transação</th>
+                    <th class="text-left subtitle-2">tipo</th>
+                    <th class="text-left subtitle-2">valor(R$)</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr v-for="transaction in transactions" :key="transaction.transactionId">
                     <td>{{ transaction.date }}</td>
-                    <td>{{ transaction.transactionType }}</td>
+                    <td>
+                      {{ transaction.transactionType }}
+                      <template v-if="transaction.transactionType === 'Transferência'">
+                        <v-tooltip top>
+                          <template v-slot:activator="{ on }" >
+                            <v-btn icon v-on="on">
+                              <v-icon small color="blue lighten-1">info</v-icon>
+                            </v-btn>
+                          </template>
+                          <span>{{ transaction.note }}</span>
+                        </v-tooltip>
+                      </template>
+                    </td>
                     <td
                       :class="transaction.value >= 0 ? 'green--text' : 'red--text'"
-                    >R$ {{ transaction.value }}</td>
+                    >{{ transaction.value }}</td>
                   </tr>
                 </tbody>
               </template>
@@ -196,7 +206,7 @@ export default {
   }),
   async mounted() {
     await this.getAccount();
-    await this.getTransactions();
+    //await this.getTransactions();
   },
   methods: {
     logOff() {
@@ -311,6 +321,7 @@ export default {
             type: "statement"
           };
           await this.getTransactions();
+          if (this.transactions.length > 0) this.dialog = true;
           break;
       }
     },
@@ -356,7 +367,8 @@ export default {
             this.transactions.push({
               transactionType: t.transactionType,
               date: t.dateFormatted,
-              value: t.value
+              value: t.value,
+              note: t.note
             });
           });
         }
@@ -376,5 +388,8 @@ export default {
 <style scoped>
 form {
   padding: 0 24px 20px;
+}
+.seeStatement {
+  margin-left: 50px;
 }
 </style>

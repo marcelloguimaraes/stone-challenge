@@ -7,7 +7,7 @@
       bottom
     >{{ textSnackBar }}</v-snackbar>
     <v-card class="mx-auto" max-width="400">
-      <v-card-title>Login</v-card-title>
+      <v-card-title>Acesse sua conta</v-card-title>
       <form @submit.prevent="submit">
         <v-text-field
           v-model="email"
@@ -95,8 +95,6 @@ export default {
           localStorage.setItem("userId", response.data.user.id);
           localStorage.setItem("email", response.data.user.email);
 
-          //const { id } = response.data.user;
-          //let userId = localStorage.getItem("userId");
           this.$router.push({ name: "dashboard"});
         } catch (error) {
           this.snackbar = true;

@@ -63,6 +63,7 @@ namespace StoneChallenge.Bank.API
                 .AddEntityFrameworkStores<BankContext>()
                 .AddDefaultTokenProviders();
 
+
             #region JWT
             var appSettingsSection = Configuration.GetSection("AuthSettings");
             services.Configure<AuthSettings>(appSettingsSection);
@@ -87,8 +88,9 @@ namespace StoneChallenge.Bank.API
                     ValidAudience = authSettings.Audience,
                     ValidIssuer = authSettings.Issuer
                 };
-            }); 
+            });
             #endregion
+
 
             services.AddMvc(options =>
             {
@@ -135,6 +137,7 @@ namespace StoneChallenge.Bank.API
 
             app.UseHttpsRedirection();
             app.UseAuthentication();
+
             app.UseMvc();
         }
     }

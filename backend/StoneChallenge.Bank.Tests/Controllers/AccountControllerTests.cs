@@ -126,7 +126,8 @@ namespace StoneChallenge.Bank.Tests
 
             var invalidTransferViewModel = new TransferViewModel()
             {
-                SourceAccount = new SourceAccountViewModel() { AccountNumber = 0, Agency = 0 }
+                SourceAccount = new SourceAccountViewModel() { AccountNumber = 0, Agency = 0 },
+                TargetAccount = new TargetAccountViewModel() { AccountNumber = 123, Agency = 123 },
             };
 
             var sourceAccount = invalidTransferViewModel.SourceAccount;

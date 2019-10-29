@@ -5,7 +5,7 @@
       :color="colorSnackBar"
       :timeout="snackBarTimeout"
       top
-    >{{ textSnackBar }}</v-snackbar>
+    ><p v-html="textSnackBar"></p></v-snackbar>
     <v-card class="mx-auto" max-width="500">
       <v-card-title class="text-center">
         <router-link to="/" title="Voltar">
@@ -86,6 +86,7 @@
 <script>
 import { validationMixin } from "vuelidate";
 import { required, email } from "vuelidate/lib/validators";
+import validateCpf from '../plugins/cpf';
 import { mask } from "vue-the-mask";
 import api from "../services/api";
 
@@ -102,7 +103,7 @@ export default {
     snackbar: false,
     colorSnackBar: "",
     textSnackBar: "",
-    snackBarTimeout: 3000,
+    snackBarTimeout: 2000,
     menu: false,
     email: "",
     password: "",
@@ -117,7 +118,7 @@ export default {
     email: { required, email },
     password: { required },
     agency: { required, validValue },
-    cpf: { required },
+    cpf: { required, validateCpf },
     name: { required },
     birthDate: { required }
   },
@@ -157,6 +158,8 @@ export default {
       let errors = [];
       if (!this.$v.cpf.$dirty) return errors;
       !this.$v.cpf.required && errors.push("Valor é obrigatório");
+      !this.$v.cpf.validateCpf && errors.push("Cpf inválido");
+
       return errors;
     },
     birthDateErrors() {
@@ -181,7 +184,13 @@ export default {
       }
 
       try {
-        const { email, password, agency, cpf, name, birthDate } = this;
+        let { email, password, agency, cpf, name, birthDate } = this;
+
+        
+        cpf = cpf.replace(/[-.]/g,'');
+        birthDate = this.parseDate(birthDate);
+        
+        console.log(birthDate);
 
         const response = await api.post("auth/open-account", {
           email,
@@ -199,13 +208,22 @@ export default {
         this.textSnackBar = "Conta aberta com sucesso";
         setTimeout(() => {
           this.$router.push({ name: "login" });
-        }, 3000);
+        }, this.snackBarTimeout);
       } catch (error) {
+        console.log(error.response.data);
+        
         this.snackbar = true;
         this.colorSnackBar = "red";
-
+        debugger;
         if (error.response) {
-          this.textSnackBar = error.response.data;
+          let msg = "";
+          let errors = error.response.data;
+          if (errors.length > 0) {
+            errors.forEach(error => {
+              msg += error + "<br>";
+            });
+          }
+          this.textSnackBar = msg;
         } else {
           this.textSnackBar = error;
         }
@@ -218,12 +236,12 @@ export default {
       if (!date) return null;
 
       const [year, month, day] = date.split("-");
-      return `${month}/${day}/${year}`;
+      return `${day}/${month}/${year}`;
     },
     parseDate(date) {
       if (!date) return null;
 
-      const [month, day, year] = date.split("/");
+      const [day, month, year] = date.split("/");
       return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
     }
   }
