@@ -7,19 +7,25 @@
       top
     >{{ textSnackBar }}</v-snackbar>
     <v-card class="mx-auto" max-width="500">
-      <div class="d-flex justify-space-between">
-
+      <v-card-title class="text-center">
         <router-link to="/" title="Voltar">
           <v-icon large class="float-left">keyboard_arrow_left</v-icon>
-          <span>Voltar</span>
-        </router-link>
+        </router-link>Abrir conta
+      </v-card-title>
+      <!-- <div class="d-flex justify-space-between">
+
         <span class="text-center">Abrir conta <v-icon color="blue" class="material-icons">account_balance</v-icon> </span>
-      </div>
+      </div>-->
       <v-divider></v-divider>
       <v-form ref="form">
         <v-row>
           <v-col cols="12">
-            <v-text-field :error-messages="nameErrors" v-model="name" label="Nome Completo"></v-text-field>
+            <v-text-field
+              :error-messages="nameErrors"
+              v-model="name"
+              label="Nome Completo"
+              @blur="$v.name.$touch"
+            ></v-text-field>
           </v-col>
           <v-col cols="6">
             <v-text-field :error-messages="emailErrors" v-model="email" label="E-mail" type="email"></v-text-field>
@@ -37,7 +43,7 @@
               label="Senha"
               type="password"
             ></v-text-field>
-            <v-text-field :error-messages="cpfErrors" v-model="cpf" label="CPF"></v-text-field>
+            <v-text-field :error-messages="cpfErrors" v-model="cpf" v-mask="mask" label="CPF"></v-text-field>
           </v-col>
         </v-row>
         <!-- <v-date-picker v-model="birthDate" color="green lighten-1" header-color="primary"></v-date-picker> -->
@@ -70,8 +76,8 @@
         </v-menu>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="green darken-1" text @click="submit">Enviar</v-btn>
-          <v-btn color="red darken-1" text @click="reset">Limpar</v-btn>
+          <v-btn color="primary" text @click="submit" :disabled="$v.$anyError">Enviar</v-btn>
+          <v-btn color="red" text @click="reset">Limpar</v-btn>
         </v-card-actions>
       </v-form>
     </v-card>
@@ -80,11 +86,16 @@
 <script>
 import { validationMixin } from "vuelidate";
 import { required, email } from "vuelidate/lib/validators";
+import { mask } from "vue-the-mask";
 import api from "../services/api";
 
 const validValue = value => value > 0;
 
 export default {
+  directives: { mask },
+  mounted() {
+    this.$v.$touch();
+  },
   data: vm => ({
     date: new Date().toISOString().substr(0, 10),
     dateFormatted: vm.formatDate(new Date().toISOString().substr(0, 10)),
@@ -97,6 +108,7 @@ export default {
     password: "",
     agency: 0,
     cpf: "",
+    mask: "###.###.###-##",
     name: "",
     birthDate: vm.formatDate(new Date().toISOString().substr(0, 10))
   }),
