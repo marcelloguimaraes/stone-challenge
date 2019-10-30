@@ -16,75 +16,6 @@ namespace StoneChallenge.Bank.Tests.Controllers
     public class CustomerControllerTests
     {
         [Fact]
-        public async Task Create_Given_InvalidModelState_Then_ReturnBadRequestObjectResult()
-        {
-            // Arrange
-            var mockService = new Mock<ICustomerAppService>();
-            var controller = new CustomerController();
-            controller.ModelState.AddModelError("CustomerViewModelInvalid", "Informe um modelo válido");
-
-            //Act
-            var result = await controller.Create(customerViewModel: null);
-
-            // Assert
-            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
-            Assert.IsType<SerializableError>(badRequestResult.Value);
-        }
-
-        [Fact]
-        public async Task Create_ReturnOkObjectResult_When_ModelIsValid()
-        {
-            // Arrange
-            var mockService = new Mock<ICustomerAppService>();
-
-            mockService.Setup(service => service.GetByCpf(It.IsAny<string>())).ReturnsAsync((Customer)null);
-
-            var controller = new CustomerController(customerAppService: mockService.Object);
-
-            var customerViewModel = new CustomerViewModel()
-            {
-                Name = "João",
-                BirthDate = new DateTime(1990, 4, 15),
-                Cpf = "15488545698"
-            };
-
-            // Act
-            var result = await controller.Create(customerViewModel);
-
-            var okResult = Assert.IsType<OkObjectResult>(result);
-            var returnValue = Assert.IsType<CustomerViewModel>(okResult.Value);
-
-            // Assert
-            Assert.Equal(customerViewModel, returnValue);
-        }
-
-        [Fact]
-        public async Task Create_Given_CustomerAlreadyExists_Then_ReturnConflict()
-        {
-            // Arrange
-            var mockService = new Mock<ICustomerAppService>();
-
-            var customer = new Customer(Guid.NewGuid().ToString(), "56544854698", "João", DateTime.Now);
-
-            mockService.Setup(service => service.GetByCpf(It.IsAny<string>())).ReturnsAsync(customer);
-
-            var controller = new CustomerController(customerAppService: mockService.Object);
-
-            var customerViewModel = new CustomerViewModel()
-            {
-                Name = "João",
-                BirthDate = DateTime.Now,
-                Cpf = "15488545698"
-            };
-
-            // Act
-            var result = await controller.Create(customerViewModel);
-
-            // Assert
-            Assert.IsType<ConflictObjectResult>(result);
-        }
-
-        [Fact]
         public async Task GetTransactionsByCpf_GivenCpfIsNullOrEmpty_Then_ReturnBadRequestResult()
         {
             var controller = new CustomerController();
@@ -128,16 +59,6 @@ namespace StoneChallenge.Bank.Tests.Controllers
             {
                 new Transaction("h1y2hy31h2", TransactionType.Deposit, DateTime.Now, 12, "1231jjusju12j")
             };
-
-            //var transactionsViewModel = new List<TransactionViewModel>()
-            //{
-            //    new TransactionViewModel()
-            //    {
-            //        TransactionType = TransactionType.Deposit.ToString(),
-            //        Date = DateTime.Now,
-            //        Value = 12
-            //    }
-            //};
 
             mockService.Setup(service => service.GetByCpf(It.IsAny<string>())).ReturnsAsync(customer);
             mockMapper.Setup(m => m.Map<IEnumerable<TransactionViewModel>>(It.IsAny<List<Transaction>>()))

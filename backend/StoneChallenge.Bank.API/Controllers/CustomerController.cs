@@ -61,33 +61,5 @@ namespace StoneChallenge.Bank.API.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
-        [HttpPost]
-        public async Task<ActionResult> Create([FromBody] CustomerViewModel customerViewModel)
-        {
-            try
-            {
-                if (!ModelState.IsValid)
-                {
-                    ModelState.AddModelError("CustomerViewModelInvalid", "Informe um modelo válido");
-                    return BadRequest(ModelState);
-                }
-
-                var customer = await _customerAppService.GetByCpf(customerViewModel.Cpf);
-
-                if(customer != null)
-                {
-                    return Conflict(new { message = "Já existe um cliente com o cpf informado" });
-                }
-
-                await _customerAppService.RegisterAsync(customerViewModel);
-
-                return Ok(customerViewModel);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
     }
 }

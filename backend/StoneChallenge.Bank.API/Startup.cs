@@ -17,6 +17,7 @@ using StoneChallenge.Bank.Domain.Interfaces;
 using StoneChallenge.Bank.Infra.Data.Context;
 using StoneChallenge.Bank.Infra.Data.Repository;
 using Swashbuckle.AspNetCore.Swagger;
+using System.Collections.Generic;
 using System.Text;
 
 namespace StoneChallenge.Bank.API
@@ -56,6 +57,20 @@ namespace StoneChallenge.Bank.API
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info { Title = "Stone Challenge - Bank Api", Version = "v1" });
+
+                var security = new Dictionary<string, IEnumerable<string>>
+                {
+                    {"Bearer", new string[] { }},
+                };
+
+                c.AddSecurityDefinition("Bearer", new ApiKeyScheme
+                {
+                    Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+                    Name = "Authorization",
+                    In = "header",
+                    Type = "apiKey"
+                });
+                c.AddSecurityRequirement(security);
             });
 
             services.AddDefaultIdentity<IdentityUser>()
@@ -98,6 +113,7 @@ namespace StoneChallenge.Bank.API
             }).AddJsonOptions(options =>
             {
                 options.SerializerSettings.Formatting = Formatting.Indented;
+                options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
             })
             .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }

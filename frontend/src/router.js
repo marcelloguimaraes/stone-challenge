@@ -1,6 +1,7 @@
 import Login from "./components/Login.vue";
 import Dashboard from "./components/Dashboard.vue";
 import OpenAccount from "./components/OpenAccount.vue";
+import AccountCreated from "./components/AccountCreated.vue";
 import VueRouter from "vue-router";
 
 const routes = [
@@ -9,20 +10,35 @@ const routes = [
     path: "/dashboard",
     name: "dashboard",
     component: Dashboard,
-    meta: { requiresAuth: true },
-    props: true
+    meta: { requiresAuth: true, transition: "fade-in-down" }
   },
   {
     path: "/open-account",
     name: "open-account",
     component: OpenAccount,
     meta: { guest: true }
+  },
+  {
+    path: '/account-created',
+    name: 'account-created',
+    component: AccountCreated,
+    meta: { guest: true, transition: 'fade-in-up'},
+    props: true,
+    beforeEnter: (to, from, next) => {
+      debugger;
+      if(Object.keys(to.params).length === 0) {
+        next(false);
+      } else {
+        next();
+      }
+    }
   }
 ];
 
 const router = new VueRouter({ routes });
 
 router.beforeEach((to, from, next) => {
+  debugger;
   const token = localStorage.getItem("token");
   if (to.matched.some(record => record.meta.requiresAuth)) {
     if (token == null) {

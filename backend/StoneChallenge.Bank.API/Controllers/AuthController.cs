@@ -31,13 +31,15 @@ namespace StoneChallenge.Bank.API.Controllers
                               UserManager<IdentityUser> userManager,
                               IOptions<AuthSettings> AuthSettings,
                               IMapper mapper,
-                              IAccountAppService accountAppService)
+                              IAccountAppService accountAppService,
+                              ICustomerAppService customerAppService)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _authSettings = AuthSettings.Value;
             _mapper = mapper;
             _accountAppService = accountAppService;
+            _customerAppService = customerAppService;
         }
 
         [HttpPost("open-account")]

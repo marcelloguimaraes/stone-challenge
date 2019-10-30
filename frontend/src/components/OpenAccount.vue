@@ -185,13 +185,11 @@ export default {
 
       try {
         let { email, password, agency, cpf, name, birthDate } = this;
-
         
         cpf = cpf.replace(/[-.]/g,'');
         birthDate = this.parseDate(birthDate);
-        
-        console.log(birthDate);
 
+        debugger;
         const response = await api.post("auth/open-account", {
           email,
           password,
@@ -202,28 +200,17 @@ export default {
             birthDate
           }
         });
+        debugger;
 
-        this.snackbar = true;
-        this.colorSnackBar = "success";
-        this.textSnackBar = "Conta aberta com sucesso";
-        setTimeout(() => {
-          this.$router.push({ name: "login" });
-        }, this.snackBarTimeout);
+        this.$router.push({name: 'account-created', params: { accountNumber: response.data.accountNumber }});
       } catch (error) {
-        console.log(error.response.data);
-        
+        this.snackBarTimeout = 60000;        
         this.snackbar = true;
         this.colorSnackBar = "red";
-        debugger;
         if (error.response) {
           let msg = "";
-          let errors = error.response.data;
-          if (errors.length > 0) {
-            errors.forEach(error => {
-              msg += error + "<br>";
-            });
-          }
-          this.textSnackBar = msg;
+          let data = error.response.data;
+          this.textSnackBar = data;
         } else {
           this.textSnackBar = error;
         }

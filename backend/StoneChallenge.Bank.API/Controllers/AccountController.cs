@@ -34,7 +34,7 @@ namespace StoneChallenge.Bank.API.Controllers
         }
 
         [HttpPost]
-        [Route("transactions")]
+        [Route("transactions", Name = "GetTransactionsByAccountNumberAndAgency")]
         public async Task<ActionResult<IEnumerable<TransactionViewModel>>> GetTransactionsByAccountNumberAndAgency([FromBody] SourceAccountViewModel sourceAccountViewModel)
         {
             if (!ModelState.IsValid)
@@ -177,46 +177,6 @@ namespace StoneChallenge.Bank.API.Controllers
                 var result = _mapper.Map<AccountListViewModel>(account);
 
                 return Ok(result);
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest($"Erro ao realizar depósito. {ex.Message}");
-            }
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Create([FromBody] AccountViewModel accountViewModel)
-        {
-            try
-            {
-                //if (!ModelState.IsValid)
-                //{
-                //    ModelState.AddModelError("AccountViewModelInvalid", "Informe um modelo válido");
-                //    return BadRequest(ModelState);
-                //}
-
-                //var customer = await _customerAppService.GetByIdAsync(accountViewModel.CustomerId);
-
-                //if (customer == null)
-                //{
-                //    return NotFound("Cliente não encontrado");
-                //}
-
-                //var account = await _accountAppService.GetByAccountNumberAsync(accountViewModel.AccountNumber);
-
-                //if (account != null)
-                //{
-                //    return Conflict(new { message = "Já existe uma conta para o número de conta informado" });
-                //}
-
-                //account = _mapper.Map<Account>(accountViewModel);
-
-                //await _accountAppService.RegisterAsync(account);
-                return Ok("Conta criada com sucesso");
             }
             catch (ArgumentException ex)
             {

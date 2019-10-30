@@ -1,7 +1,9 @@
 <template>
   <v-app class="d-flex justify-center align-center flex-column">
     <v-container>
-      <router-view></router-view>
+      <vue-page-transition name="fade-in-right">
+        <router-view/>
+      </vue-page-transition>
     </v-container>
   </v-app>
 </template>

@@ -53,7 +53,7 @@
             </v-card-actions>
           </template>
           <v-card>
-            <v-card-title class="headline">{{ operation.name }}</v-card-title>
+            <v-card-title class="headline" color="primary">{{ operation.name }}</v-card-title>
             <v-form v-if="operation.type !== 'statement'">
               <div v-if="operation.type === 'transfer'">
                 <v-text-field
@@ -141,6 +141,8 @@
 import api from "../services/api";
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
+import { mdiAccount } from '@mdi/js'
+
 
 const validValue = value => value > 0;
 
@@ -192,6 +194,8 @@ export default {
     colorSnackBar: "",
     textSnackBar: "",
     snackBarTimeout: 3000,
+
+    svgPath: mdiAccount,
 
     userId: localStorage.getItem("userId"),
     value: 0.0,
