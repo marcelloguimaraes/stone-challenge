@@ -1,11 +1,8 @@
 <template>
   <v-container fluid>
-    <v-snackbar
-      v-model="snackbar"
-      :color="colorSnackBar"
-      :timeout="snackBarTimeout"
-      top
-    ><p v-html="textSnackBar"></p></v-snackbar>
+    <v-snackbar v-model="snackbar" :color="colorSnackBar" :timeout="snackBarTimeout" top>
+      <p v-html="textSnackBar"></p>
+    </v-snackbar>
     <v-card class="mx-auto" max-width="500">
       <v-card-title class="text-center">
         <router-link to="/" title="Voltar">
@@ -86,7 +83,7 @@
 <script>
 import { validationMixin } from "vuelidate";
 import { required, email } from "vuelidate/lib/validators";
-import validateCpf from '../plugins/cpf';
+import validateCpf from "../plugins/cpf";
 import { mask } from "vue-the-mask";
 import api from "../services/api";
 
@@ -185,11 +182,10 @@ export default {
 
       try {
         let { email, password, agency, cpf, name, birthDate } = this;
-        
-        cpf = cpf.replace(/[-.]/g,'');
+
+        cpf = cpf.replace(/[-.]/g, "");
         birthDate = this.parseDate(birthDate);
 
-        debugger;
         const response = await api.post("auth/open-account", {
           email,
           password,
@@ -200,11 +196,13 @@ export default {
             birthDate
           }
         });
-        debugger;
 
-        this.$router.push({name: 'account-created', params: { accountNumber: response.data.accountNumber }});
+        this.$router.push({
+          name: "account-created",
+          params: { accountNumber: response.data.accountNumber }
+        });
       } catch (error) {
-        this.snackBarTimeout = 60000;        
+        this.snackBarTimeout = 60000;
         this.snackbar = true;
         this.colorSnackBar = "red";
         if (error.response) {

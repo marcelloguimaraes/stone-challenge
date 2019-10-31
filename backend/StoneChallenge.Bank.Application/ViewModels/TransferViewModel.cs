@@ -7,7 +7,7 @@ namespace StoneChallenge.Bank.Application.ViewModels
         public SourceAccountViewModel SourceAccount { get; set; }
         public TargetAccountViewModel TargetAccount { get; set; }
         [Required(ErrorMessage="Valor de transferência é obrigatório")]
-        [Range(1, 1000000, ErrorMessage = "Valor de transferência inválido")]
+        [Range(0.0, 1000000.0, ErrorMessage = "Valor de transferência inválido")]
         public double Value { get; set; }
     }
 

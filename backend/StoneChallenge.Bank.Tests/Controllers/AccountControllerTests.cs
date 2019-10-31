@@ -405,51 +405,51 @@ namespace StoneChallenge.Bank.Tests
         //    Assert.IsType<NotFoundObjectResult>(result);
         //}
 
-        [Fact]
-        public async Task Create_ReturnOkObjectResult_When_ModelIsValid()
-        {
-            // Arrange
-            var mockAccountService = new Mock<IAccountAppService>();
-            var mockCustomerService = new Mock<ICustomerAppService>();
+        //[Fact]
+        //public async Task Create_ReturnOkObjectResult_When_ModelIsValid()
+        //{
+        //    // Arrange
+        //    var mockAccountService = new Mock<IAccountAppService>();
+        //    var mockCustomerService = new Mock<ICustomerAppService>();
 
-            var controller = new AccountController(accountAppService: mockAccountService.Object,
-                                                   customerAppService: mockCustomerService.Object);
+        //    var controller = new AccountController(accountAppService: mockAccountService.Object,
+        //                                           customerAppService: mockCustomerService.Object);
 
-            var account = new Account("47a77e3a-4db7-44bc-aa01-bcab6b58e191",
-                                      3032,
-                                      "b6f5a05b-a466-4bcc-977a-507e9745a227");
+        //    var account = new Account("47a77e3a-4db7-44bc-aa01-bcab6b58e191",
+        //                              3032,
+        //                              "b6f5a05b-a466-4bcc-977a-507e9745a227");
 
-            var accountViewModel = new AccountViewModel()
-            {
-                AccountNumber = 928739,
-                Agency = 6152,
-                CustomerId = "aajusjasuj2134234"
-            };
+        //    var accountViewModel = new AccountViewModel()
+        //    {
+        //        AccountNumber = 928739,
+        //        Agency = 6152,
+        //        CustomerId = "aajusjasuj2134234"
+        //    };
 
-            var customerViewModel = new CustomerViewModel()
-            {
-                BirthDate = new DateTime(2000, 4, 14),
-                Cpf = "17266356276",
-                Name = "Teste"
-            };
+        //    var customerViewModel = new CustomerViewModel()
+        //    {
+        //        BirthDate = new DateTime(2000, 4, 14),
+        //        Cpf = "17266356276",
+        //        Name = "Teste"
+        //    };
 
             
-            mockCustomerService.Setup(service => service.GetByIdAsync(It.IsAny<string>())).ReturnsAsync(customerViewModel);
+        //    mockCustomerService.Setup(service => service.GetByIdAsync(It.IsAny<string>())).ReturnsAsync(customerViewModel);
 
-            mockAccountService.Setup(service => service.GetByAccountNumberAndAgencyAsync(
-                        account.AccountNumber,
-                        account.Agency
-                    )).ReturnsAsync(account);
+        //    mockAccountService.Setup(service => service.GetByAccountNumberAndAgencyAsync(
+        //                account.AccountNumber,
+        //                account.Agency
+        //            )).ReturnsAsync(account);
 
-            mockAccountService.Setup(service => service.RegisterAsync(It.IsAny<OpenAccountViewModel>()));
+        //    mockAccountService.Setup(service => service.RegisterAsync(It.IsAny<OpenAccountViewModel>()));
 
-            //Act
-            var result = await controller.Create(accountViewModel);
+        //    //Act
+        //    var result = await controller.Create(accountViewModel);
 
-            // Assert
-            Assert.IsType<OkObjectResult>(result);
+        //    // Assert
+        //    Assert.IsType<OkObjectResult>(result);
 
-        }
+        //}
         #endregion
 
         #region Transactions

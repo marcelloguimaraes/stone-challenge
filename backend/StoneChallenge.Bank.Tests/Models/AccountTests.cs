@@ -40,8 +40,10 @@ namespace StoneChallenge.Bank.Tests.Models
                 Balance = 0
             };
 
+            var fee = 4;
+
             var resultMessage = Assert.Throws<ArgumentException>(() => account.WithDraw(20));
-            var expectedMessage = "Valor superior ao saldo atual";
+            var expectedMessage = $"Valor com a taxa superior ao saldo atual. Taxa: R$ {fee}";
             Assert.Equal(expectedMessage, resultMessage.Message);
         }
 

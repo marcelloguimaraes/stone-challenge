@@ -19,14 +19,13 @@ const routes = [
     meta: { guest: true }
   },
   {
-    path: '/account-created',
-    name: 'account-created',
+    path: "/account-created",
+    name: "account-created",
     component: AccountCreated,
-    meta: { guest: true, transition: 'fade-in-up'},
+    meta: { guest: true, transition: "fade-in-up" },
     props: true,
     beforeEnter: (to, from, next) => {
-      debugger;
-      if(Object.keys(to.params).length === 0) {
+      if (Object.keys(to.params).length === 0) {
         next(false);
       } else {
         next();
@@ -38,7 +37,6 @@ const routes = [
 const router = new VueRouter({ routes });
 
 router.beforeEach((to, from, next) => {
-  debugger;
   const token = localStorage.getItem("token");
   if (to.matched.some(record => record.meta.requiresAuth)) {
     if (token == null) {

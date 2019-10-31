@@ -4,7 +4,7 @@
       v-model="snackbar"
       :color="colorSnackBar"
       :timeout="snackBarTimeout"
-      bottom
+      left
     >{{ textSnackBar }}</v-snackbar>
     <v-card class="mx-auto" max-width="400">
       <v-card-title class="d-flex justify-space-between">
@@ -53,73 +53,82 @@
             </v-card-actions>
           </template>
           <v-card>
-            <v-card-title class="headline" color="primary">{{ operation.name }}</v-card-title>
-            <v-form v-if="operation.type !== 'statement'">
-              <div v-if="operation.type === 'transfer'">
-                <v-text-field
-                  type="number"
-                  min="1"
-                  max="9999"
-                  maxlength="4"
-                  label="Agência"
-                  v-model="targetAccountAgency"
-                  :error-messages="targetAccountAgencyErrors"
-                  @input="$v.targetAccountAgency.$touch"
-                  @blur="$v.targetAccountAgency.$touch"
-                ></v-text-field>
-                <v-text-field
-                  type="number"
-                  min="1"
-                  max="999999"
-                  maxlength="6"
-                  label="Conta"
-                  v-model="targetAccountNumber"
-                  :error-messages="targetAccountNumberErrors"
-                  @input="$v.targetAccountNumber.$touch"
-                  @blur="$v.targetAccountNumber.$touch"
-                ></v-text-field>
+            <div v-if="transactions.length === 0 && operation.type === 'statement'">
+              <div class="text-center">
+                <h1>Ops!</h1>
+                <br />
+                <p>Nenhuma transação para esta conta ainda :(</p>
               </div>
-              <v-text-field
-                type="number"
-                v-model="value"
-                label="Valor"
-                prefix="R$"
-                :error-messages="valueErrors"
-                @blur="$v.value.$touch"
-              ></v-text-field>
-            </v-form>
-            <v-simple-table height="400px" fixed-header v-if="operation.type === 'statement'">
-              <template v-slot:default>
-                <thead>
-                  <tr>
-                    <th class="text-left subtitle-2">data transação</th>
-                    <th class="text-left subtitle-2">tipo</th>
-                    <th class="text-left subtitle-2">valor(R$)</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="transaction in transactions" :key="transaction.transactionId">
-                    <td>{{ transaction.date }}</td>
-                    <td>
-                      {{ transaction.transactionType }}
-                      <template v-if="transaction.transactionType === 'Transferência'">
-                        <v-tooltip top>
-                          <template v-slot:activator="{ on }" >
-                            <v-btn icon v-on="on">
-                              <v-icon small color="blue lighten-1">info</v-icon>
-                            </v-btn>
-                          </template>
-                          <span>{{ transaction.note }}</span>
-                        </v-tooltip>
-                      </template>
-                    </td>
-                    <td
-                      :class="transaction.value >= 0 ? 'green--text' : 'red--text'"
-                    >{{ transaction.value }}</td>
-                  </tr>
-                </tbody>
-              </template>
-            </v-simple-table>
+            </div>
+            <div v-else>
+              <v-card-title class="headline" color="primary">{{ operation.name }}</v-card-title>
+              <v-form v-if="operation.type !== 'statement'">
+                <div v-if="operation.type === 'transfer'">
+                  <v-text-field
+                    type="number"
+                    min="1"
+                    max="9999"
+                    label="Agência"
+                    v-model="targetAccountAgency"
+                    :error-messages="targetAccountAgencyErrors"
+                    @input="$v.targetAccountAgency.$touch"
+                    @blur="$v.targetAccountAgency.$touch"
+                  ></v-text-field>
+                  <v-text-field
+                    type="number"
+                    min="1"
+                    max="999999"
+                    label="Conta"
+                    v-model="targetAccountNumber"
+                    :error-messages="targetAccountNumberErrors"
+                    @input="$v.targetAccountNumber.$touch"
+                    @blur="$v.targetAccountNumber.$touch"
+                  ></v-text-field>
+                </div>
+                <v-text-field
+                  type="number"
+                  v-model="value"
+                  label="Valor"
+                  prefix="R$"
+                  :error-messages="valueErrors"
+                  @blur="$v.value.$touch"
+                ></v-text-field>
+              </v-form>
+              <v-simple-table height="400px" fixed-header v-if="operation.type === 'statement'">
+                <template v-slot:default>
+                  <thead>
+                    <tr>
+                      <th class="text-left subtitle-2">data transação</th>
+                      <th class="text-left subtitle-2">tipo</th>
+                      <th class="text-left subtitle-2">valor(R$)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="transaction in transactions" :key="transaction.transactionId">
+                      <td>{{ transaction.date }}</td>
+                      <td>
+                        {{ transaction.transactionType }}
+                        <template
+                          v-if="transaction.transactionType === 'Transferência'"
+                        >
+                          <v-tooltip top>
+                            <template v-slot:activator="{ on }">
+                              <v-btn icon v-on="on">
+                                <v-icon small color="blue lighten-1">info</v-icon>
+                              </v-btn>
+                            </template>
+                            <span>{{ transaction.note }}</span>
+                          </v-tooltip>
+                        </template>
+                      </td>
+                      <td
+                        :class="transaction.value >= 0 ? 'green--text' : 'red--text'"
+                      >{{ transaction.value.toFixed(2) }}</td>
+                    </tr>
+                  </tbody>
+                </template>
+              </v-simple-table>
+            </div>
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn
@@ -140,11 +149,10 @@
 <script>
 import api from "../services/api";
 import { validationMixin } from "vuelidate";
-import { required } from "vuelidate/lib/validators";
-import { mdiAccount } from '@mdi/js'
+import { required, maxLength } from "vuelidate/lib/validators";
+import { mdiAccount } from "@mdi/js";
 
-
-const validValue = value => value > 0;
+const validValue = value => value > 0 && value <= 1000000;
 
 export default {
   mixins: [validationMixin],
@@ -156,7 +164,8 @@ export default {
       let errors = [];
       if (!this.$v.value.$dirty) return errors;
       !this.$v.value.required && errors.push("Valor é obrigatório");
-      !this.$v.value.validValue && errors.push("Digite um valor válido");
+      !this.$v.value.validValue &&
+        errors.push("Digite um valor entre 0 e 1000000");
       return errors;
     },
     targetAccountNumberErrors() {
@@ -166,6 +175,8 @@ export default {
         errors.push("Valor é obrigatório");
       !this.$v.targetAccountNumber.validValue &&
         errors.push("Digite um valor válido");
+      !this.$v.targetAccountNumber.maxLength &&
+        errors.push("Deve ter no máximo 6 dígitos");
       return errors;
     },
     targetAccountAgencyErrors() {
@@ -175,6 +186,8 @@ export default {
         errors.push("Valor é obrigatório");
       !this.$v.targetAccountAgency.validValue &&
         errors.push("Digite um valor válido");
+      !this.$v.targetAccountAgency.maxLength &&
+        errors.push("Deve ter no máximo 4 dígitos");
       return errors;
     }
   },
@@ -182,18 +195,20 @@ export default {
     value: { required, validValue },
     targetAccountNumber: {
       required,
-      validValue
+      validValue,
+      maxLength: maxLength(6)
     },
     targetAccountAgency: {
       required,
-      validValue
+      validValue,
+      maxLength: maxLength(4)
     }
   },
   data: () => ({
     snackbar: false,
     colorSnackBar: "",
     textSnackBar: "",
-    snackBarTimeout: 3000,
+    snackBarTimeout: 6000,
 
     svgPath: mdiAccount,
 
@@ -210,7 +225,6 @@ export default {
   }),
   async mounted() {
     await this.getAccount();
-    //await this.getTransactions();
   },
   methods: {
     logOff() {
@@ -325,7 +339,8 @@ export default {
             type: "statement"
           };
           await this.getTransactions();
-          if (this.transactions.length > 0) this.dialog = true;
+          //if (this.transactions.length > 0)
+          this.dialog = true;
           break;
       }
     },
@@ -377,13 +392,15 @@ export default {
           });
         }
       } catch (error) {
-        this.snackbar = true;
-        this.colorSnackBar = "red";
-        if (error.response) {
-          this.textSnackBar = error.response.data;
-        } else {
-          this.textSnackBar = error;
-        }
+        console.log(error);
+
+        // this.snackbar = true;
+        // this.colorSnackBar = "red";
+        // if (error.response) {
+        //   this.textSnackBar = error.response.data;
+        // } else {
+        //   this.textSnackBar = error;
+        // }
       }
     }
   }
