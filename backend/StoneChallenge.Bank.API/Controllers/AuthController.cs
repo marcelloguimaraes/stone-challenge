@@ -27,12 +27,12 @@ namespace StoneChallenge.Bank.API.Controllers
         private readonly IAccountAppService _accountAppService;
         private readonly ICustomerAppService _customerAppService;
 
-        public AuthController(SignInManager<IdentityUser> signInManager,
-                              UserManager<IdentityUser> userManager,
-                              IOptions<AuthSettings> AuthSettings,
-                              IMapper mapper,
-                              IAccountAppService accountAppService,
-                              ICustomerAppService customerAppService)
+        public AuthController(SignInManager<IdentityUser> signInManager = null,
+                              UserManager<IdentityUser> userManager = null,
+                              IOptions<AuthSettings> AuthSettings = null,
+                              IMapper mapper = null,
+                              IAccountAppService accountAppService = null,
+                              ICustomerAppService customerAppService = null)
         {
             _signInManager = signInManager;
             _userManager = userManager;

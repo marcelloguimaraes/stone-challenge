@@ -195,6 +195,55 @@ namespace StoneChallenge.Bank.Tests.Models
             Assert.Equal(balanceTargetAccountExpected, targetAccount.Balance);
         }
 
+        [Fact]
+        public void Transfer_Given_Transfer_Then_DepositTransactionMustBeInsertedWithoutFee()
+        {
+            var sourceAccount = new Account("b9def779-e3f9-4813-b789-3fe7c1306663",
+                                      3032,
+                                      "b6f5a05b-a466-4bcc-977a-507e9745a227")
+            {
+                Balance = 100
+            };
 
+            var targetAccount = new Account("d3067022-5fab-4a42-9c80-6dab8b231a21",
+                                      3031,
+                                      "b84385d7-6b8c-459e-bf29-db46857fd40c")
+            {
+                Balance = 0
+            };
+
+            double value = 10;
+            double valueTransactionExpected = 10;
+
+            sourceAccount.Transfer(targetAccount, value);
+
+            var transaction = targetAccount.Transactions.LastOrDefault();
+            Assert.Equal(valueTransactionExpected, transaction.Value);
+        }
+        [Fact]
+        public void Transfer_Given_Transfer_Then_WithdrawTransactionMustBeInsertedWithFeeAndAsANegativeValue()
+        {
+            var sourceAccount = new Account("b9def779-e3f9-4813-b789-3fe7c1306663",
+                                      3032,
+                                      "b6f5a05b-a466-4bcc-977a-507e9745a227")
+            {
+                Balance = 100
+            };
+
+            var targetAccount = new Account("d3067022-5fab-4a42-9c80-6dab8b231a21",
+                                      3031,
+                                      "b84385d7-6b8c-459e-bf29-db46857fd40c")
+            {
+                Balance = 0
+            };
+
+            double value = 10;
+            double valueTransactionExpected = -11;
+
+            sourceAccount.Transfer(targetAccount, value);
+
+            var transaction = sourceAccount.Transactions.LastOrDefault();
+            Assert.Equal(valueTransactionExpected, transaction.Value);
+        }
     }
 }

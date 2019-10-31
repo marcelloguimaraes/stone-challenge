@@ -43,10 +43,11 @@ namespace StoneChallenge.Bank.Domain.Models
 
             WithDraw(valueWithFee, isTransfering: true);
             
+            // Quando o depósito é chamado pela transferência deve enviar o valor sem a taxa, pois só quem paga a taxa é a conta origem
             targetAccount.Deposit(value, isTransfering: true);
 
             AddTransaction(new Transaction(Guid.NewGuid().ToString(), TransactionType.Transfer, DateTime.Now, valueWithFee * -1, AccountId, $"para a conta {targetAccount.AccountNumber}"));
-            targetAccount.AddTransaction(new Transaction(Guid.NewGuid().ToString(), TransactionType.Transfer, DateTime.Now, value - _fee, targetAccount.AccountId, $"recebida da conta {AccountNumber}"));
+            targetAccount.AddTransaction(new Transaction(Guid.NewGuid().ToString(), TransactionType.Transfer, DateTime.Now, value, targetAccount.AccountId, $"recebida da conta {AccountNumber}"));
         }
 
         public void WithDraw(double value, bool isTransfering = false)
@@ -75,7 +76,7 @@ namespace StoneChallenge.Bank.Domain.Models
 
         public void Deposit(double value, bool isTransfering = false)
         {
-            ValidateNegativeValue(value - _fee);
+            ValidateNegativeValue(value);
 
             double valueWithFee = 0;
 
