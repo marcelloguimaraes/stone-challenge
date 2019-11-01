@@ -1,6 +1,6 @@
 # stone-challenge-bank-front
 
-Vuejs app create for the stone challenge requested.
+Vuejs app created for the stone challenge requested.
 
 ## Technologies/libs used
 [axios](https://github.com/axios/axios)
