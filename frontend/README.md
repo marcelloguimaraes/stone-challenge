@@ -1,29 +1,30 @@
 # stone-challenge-bank-front
 
-## Project setup
+Vuejs app create for the stone challenge requested.
+
+## Technologies/libs used
+[axios](https://github.com/axios/axios)
+
+[vue-currency-field](https://github.com/mazipan/vue-currency-filter)
+
+[vue-router](https://github.com/vuejs/vue-router)
+
+[vue-the-mask](https://github.com/vuejs-tips/vue-the-mask)
+
+[vuelidate](https://github.com/vuelidate/vuelidate)
+
+[vuetify](https://github.com/vuetifyjs/vuetify)
+
+[vue-money](https://github.com/vuetifyjs/vuetify)
+
+## Followsteps to run the project
+## Install dependencies
 ```
 yarn install
 ```
 
-### Compiles and hot-reloads for development
+### Run the project local
 ```
 yarn run serve
 ```
-
-### Compiles and minifies for production
-```
-yarn run build
-```
-
-### Run your tests
-```
-yarn run test
-```
-
-### Lints and fixes files
-```
-yarn run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+You will be able to see the project running at http://localhost:8080
