@@ -1,5 +1,8 @@
 <template>
   <v-container fluid>
+    value:{{value}}
+    <br />
+    valueConverted:{{valueConverted}}
     <v-snackbar
       v-model="snackbar"
       :color="colorSnackBar"
@@ -86,10 +89,11 @@
                   ></v-text-field>
                 </div>
                 <v-text-field
-                  type="number"
                   v-model="value"
+                  type="text"
+                  prefix="R$ "
+                  v-money="money"
                   label="Valor"
-                  prefix="R$"
                   :error-messages="valueErrors"
                   @blur="$v.value.$touch"
                 ></v-text-field>
@@ -151,21 +155,58 @@ import api from "../services/api";
 import { validationMixin } from "vuelidate";
 import { required, maxLength } from "vuelidate/lib/validators";
 import { mdiAccount } from "@mdi/js";
+import { VMoney } from "v-money";
 
-const validValue = value => value > 0 && value <= 1000000;
+const validValue = value => {
+  return value > 0.0 && value <= 1000000.0;
+};
 
 export default {
+  directives: { money: VMoney },
+  data: () => ({
+    snackbar: false,
+    colorSnackBar: "",
+    textSnackBar: "",
+    snackBarTimeout: 6000,
+
+    price: 123.45,
+    money: {
+      decimal: ",",
+      thousands: ".",
+      //prefix: "R$ ",
+      suffix: "",
+      precision: 2,
+      masked: false
+    },
+    svgPath: mdiAccount,
+
+    userId: localStorage.getItem("userId"),
+    value: "",
+    targetAccountNumber: 0,
+    targetAccountAgency: 0,
+    account: {},
+    transactions: [],
+    dialog: false,
+    operation: {
+      name: ""
+    }
+  }),
   mixins: [validationMixin],
   computed: {
     balance() {
       return this.account.balance.toFixed(2);
     },
+    valueConverted() {
+      let valueWithoutDot = this.value.replace(/[.]/g, "");
+      let valueWithoutComma = valueWithoutDot.replace(/[,]/, ".");
+      return parseFloat(valueWithoutComma);
+    },
     valueErrors() {
       let errors = [];
       if (!this.$v.value.$dirty) return errors;
       !this.$v.value.required && errors.push("Valor é obrigatório");
-      !this.$v.value.validValue &&
-        errors.push("Digite um valor entre 0 e 1000000");
+      // !this.$v.value.validValue &&
+      //   errors.push("Digite um valor entre 0 e 1000000");
       return errors;
     },
     targetAccountNumberErrors() {
@@ -192,7 +233,7 @@ export default {
     }
   },
   validations: {
-    value: { required, validValue },
+    value: { required },
     targetAccountNumber: {
       required,
       validValue,
@@ -204,25 +245,6 @@ export default {
       maxLength: maxLength(4)
     }
   },
-  data: () => ({
-    snackbar: false,
-    colorSnackBar: "",
-    textSnackBar: "",
-    snackBarTimeout: 6000,
-
-    svgPath: mdiAccount,
-
-    userId: localStorage.getItem("userId"),
-    value: 0.0,
-    targetAccountNumber: 0,
-    targetAccountAgency: 0,
-    account: {},
-    transactions: [],
-    dialog: false,
-    operation: {
-      name: ""
-    }
-  }),
   async mounted() {
     await this.getAccount();
   },

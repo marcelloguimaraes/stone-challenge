@@ -4,13 +4,13 @@ import vuetify from "./plugins/vuetify";
 import Vuelidate from "vuelidate";
 import VueRouter from "vue-router";
 import router from "./router";
-import "v-currency-field/dist/index.css";
-import VuePageTransition from 'vue-page-transition'
-
+import VuePageTransition from "vue-page-transition";
+import money from "v-money";
 
 Vue.config.productionTip = false;
 
-Vue.use(VuePageTransition)
+Vue.use(money, { precision: 4 });
+Vue.use(VuePageTransition);
 Vue.use(Vuelidate);
 Vue.use(VueRouter);
 

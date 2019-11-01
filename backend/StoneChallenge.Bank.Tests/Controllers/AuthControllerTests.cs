@@ -12,6 +12,8 @@ using StoneChallenge.Bank.Application.Interfaces;
 using StoneChallenge.Bank.Domain.Models;
 using static StoneChallenge.Bank.Application.ViewModels.AuthViewModel;
 using StoneChallenge.Bank.Application.ViewModels;
+using Microsoft.AspNetCore.Identity;
+using System.Threading;
 
 namespace StoneChallenge.Bank.Tests.Controllers
 {
@@ -57,5 +59,45 @@ namespace StoneChallenge.Bank.Tests.Controllers
             // Assert
             Assert.IsType<ConflictObjectResult>(result);
         }
+
+        //[Fact]
+        //public async Task OpenAccount_Given_CreateAsyncUserManagerResultNotSucceeded_Then_ReturnIdentityResultErrors()
+        //{
+        //    var mockCustomerService = new Mock<ICustomerAppService>();
+        //    var mockAuthSettings = new Mock<IOptions<AuthSettings>>();
+
+        //    var store = new Mock<IUserStore<IdentityUser>>();
+
+        //    var identityUser = new IdentityUser()
+        //    {
+        //        Email = "testedda.com", UserName = "wrong"
+        //    };
+
+        //    var userManager = new UserManager<IdentityUser>(store.Object, null, null, null, null, null, null, null, null);
+
+        //    store.Setup(s => s.CreateAsync(identityUser, new CancellationToken() { }));
+
+        //    var customer = new Customer("jak1i2k3i-k12i3k-12ki3k1", "1645545852", "Teste", DateTime.Now);
+        //    var openAccountViewModel = new OpenAccountViewModel()
+        //    {
+        //        Agency = 3032,
+        //        Customer = new CustomerViewModel() { BirthDate = customer.BirthDate, Cpf = customer.Cpf, Name = customer.Name },
+        //        Email = "marcello@hotmail.com",
+        //        Password = "12j3123j"
+        //    };
+
+        //    mockCustomerService.Setup(c => c.GetByCpf(It.IsAny<string>())).ReturnsAsync((Customer)null);
+
+
+        //    //mockUserManager.Setup(u => u.CreateAsync(It.IsAny<IdentityUser>(), openAccountViewModel.Password)).ReturnsAsync()
+
+        //    // Arrange
+        //    var controller = new AuthController(customerAppService: mockCustomerService.Object, AuthSettings: mockAuthSettings.Object, userManager: userManager);
+        //    //Act
+        //    var result = await controller.OpenAccount(openAccountViewModel);
+
+        //    // Assert
+        //    Assert.IsType<IdentityResult>(result);
+        //}
     }
 }
