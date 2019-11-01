@@ -155,9 +155,9 @@ import { required, maxLength } from "vuelidate/lib/validators";
 import { mdiAccount } from "@mdi/js";
 import { VMoney } from "v-money";
 
-// const validValue = value => {
-//   return value > 0.0 && value <= 1000000.0;
-// };
+const validValue = value => {
+  return value > "0,00" && value <= "1.000.000,00";
+};
 
 export default {
   directives: { money: VMoney },
@@ -280,7 +280,6 @@ export default {
 
         const headers = this.getHeaders();
         let url = "";
-        debugger;
         let data = {
           accountNumber: this.account.accountNumber,
           agency: this.account.agency,
@@ -313,7 +312,6 @@ export default {
         this.snackbar = true;
         this.colorSnackBar = "success";
         this.textSnackBar = "Operação realizada com sucesso";
-        debugger;
         this.cleanModel();
       } catch (error) {
         this.snackbar = true;
