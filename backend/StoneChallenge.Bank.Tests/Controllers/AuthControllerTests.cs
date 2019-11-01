@@ -53,6 +53,7 @@ namespace StoneChallenge.Bank.Tests.Controllers
 
             // Arrange
             var controller = new AuthController(customerAppService: mockCustomerService.Object, AuthSettings: mockAuthSettings.Object);
+
             //Act
             var result = await controller.OpenAccount(openAccountViewModel);
 

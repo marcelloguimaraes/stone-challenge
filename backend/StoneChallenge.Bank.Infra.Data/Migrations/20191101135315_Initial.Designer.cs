@@ -9,7 +9,7 @@ using StoneChallenge.Bank.Infra.Data.Context;
 namespace StoneChallenge.Bank.Infra.Data.Migrations
 {
     [DbContext(typeof(BankContext))]
-    [Migration("20191029211149_Initial")]
+    [Migration("20191101135315_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

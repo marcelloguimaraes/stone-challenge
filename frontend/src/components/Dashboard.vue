@@ -326,6 +326,7 @@ export default {
     async configureModal(operation) {
       this.cleanModel();
       this.$v.$reset();
+
       switch (operation) {
         case "withdraw":
           this.operation = {
@@ -354,7 +355,6 @@ export default {
             type: "statement"
           };
           await this.getTransactions();
-          //if (this.transactions.length > 0)
           this.dialog = true;
           break;
       }
@@ -408,14 +408,6 @@ export default {
         }
       } catch (error) {
         console.log(error);
-
-        // this.snackbar = true;
-        // this.colorSnackBar = "red";
-        // if (error.response) {
-        //   this.textSnackBar = error.response.data;
-        // } else {
-        //   this.textSnackBar = error;
-        // }
       }
     }
   }

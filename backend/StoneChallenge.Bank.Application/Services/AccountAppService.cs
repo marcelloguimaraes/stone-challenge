@@ -41,7 +41,13 @@ namespace StoneChallenge.Bank.Application.Services
             var user = await _userManager.FindByEmailAsync(openAccount.Email);
 
             // cria conta
-            var account = new Account(Guid.NewGuid().ToString(), 3032, customer.CustomerId);
+            var account = new Account(Guid.NewGuid().ToString(), openAccount.Agency, customer.CustomerId);
+
+            if(_accountRepository.GetByAccountNumberAsync(account.AccountNumber) != null)
+            {
+                throw new InvalidOperationException("Já existe uma conta com este número");
+            }
+
             account.UserId = user.Id;
             account.Customer = customer;
 

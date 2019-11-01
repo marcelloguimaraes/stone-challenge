@@ -71,9 +71,13 @@ namespace StoneChallenge.Bank.API.Controllers
 
                 return Ok(new { account.Agency, account.AccountNumber, message = "Conta aberta com sucesso" });
             }
+            catch(InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
             catch (Exception ex)
             {
-                return BadRequest($"Erro ao abrir conta {ex.Message}");
+                return BadRequest($"Erro ao abrir conta. {ex.Message}");
             }
         }
 
