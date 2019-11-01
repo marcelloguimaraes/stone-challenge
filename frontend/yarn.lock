@@ -1206,6 +1206,11 @@ accepts@~1.3.4, accepts@~1.3.5, accepts@~1.3.7:
     mime-types "~2.1.24"
     negotiator "0.6.2"
 
+accounting@0.4.1:
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/accounting/-/accounting-0.4.1.tgz#87dd4103eff7f4460f1e186f5c677ed6cf566883"
+  integrity sha1-h91BA+/39EYPHhhvXGd+1s9WaIM=
+
 acorn-jsx@^5.0.0, acorn-jsx@^5.1.0:
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/acorn-jsx/-/acorn-jsx-5.1.0.tgz#294adb71b57398b0680015f0a38c563ee1db5384"
@@ -8103,6 +8108,13 @@ vue-cli-plugin-vuetify@^1.1.1:
   dependencies:
     semver "^6.0.0"
     shelljs "^0.8.3"
+
+vue-currency-filter@^3.4.3:
+  version "3.4.3"
+  resolved "https://registry.yarnpkg.com/vue-currency-filter/-/vue-currency-filter-3.4.3.tgz#d2f497fcb7079c19451ed5ae001772a2f0e0370c"
+  integrity sha512-Zi77cBqmHxOLNSNijASB7tpEgma8baHH9o7EbB2+UeuFYqGNkLo5k5yZCGolmm20MsENt4U9FBfG/HPHofZ+Bw==
+  dependencies:
+    accounting "0.4.1"
 
 vue-eslint-parser@^5.0.0:
   version "5.0.0"

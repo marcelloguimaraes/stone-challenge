@@ -1,8 +1,5 @@
 <template>
   <v-container fluid>
-    value:{{value}}
-    <br />
-    valueConverted:{{valueConverted}}
     <v-snackbar
       v-model="snackbar"
       :color="colorSnackBar"
@@ -26,7 +23,7 @@
         <p
           class="subtitle-1"
           :class="account.balance >= 0 ? 'green--text' : 'red--text'"
-        >R$ {{balance}}</p>
+        >{{account.balance | currency}}</p>
       </v-card-text>
       <v-row justify="center">
         <v-dialog v-model="dialog" :max-width="operation.type === 'statement' ? 500 : 300">
@@ -90,7 +87,6 @@
                 </div>
                 <v-text-field
                   v-model="value"
-                  type="text"
                   prefix="R$ "
                   v-money="money"
                   label="Valor"
@@ -104,7 +100,7 @@
                     <tr>
                       <th class="text-left subtitle-2">data transação</th>
                       <th class="text-left subtitle-2">tipo</th>
-                      <th class="text-left subtitle-2">valor(R$)</th>
+                      <th class="text-left subtitle-2">valor</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -127,7 +123,7 @@
                       </td>
                       <td
                         :class="transaction.value >= 0 ? 'green--text' : 'red--text'"
-                      >{{ transaction.value.toFixed(2) }}</td>
+                      >{{ transaction.value | currency }}</td>
                     </tr>
                   </tbody>
                 </template>
@@ -142,7 +138,7 @@
                 @click="submitOperation(operation.type)"
                 :disabled="$v.value.$invalid"
               >{{ operation.buttonText }}</v-btn>
-              <v-btn color="red darken-1" text @click="dialog = false">Fechar</v-btn>
+              <v-btn color="red darken-1" text @click="dialog = false;">Fechar</v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
@@ -157,9 +153,9 @@ import { required, maxLength } from "vuelidate/lib/validators";
 import { mdiAccount } from "@mdi/js";
 import { VMoney } from "v-money";
 
-const validValue = value => {
-  return value > 0.0 && value <= 1000000.0;
-};
+// const validValue = value => {
+//   return value > 0.0 && value <= 1000000.0;
+// };
 
 export default {
   directives: { money: VMoney },
@@ -193,13 +189,10 @@ export default {
   }),
   mixins: [validationMixin],
   computed: {
-    balance() {
-      return this.account.balance.toFixed(2);
-    },
     valueConverted() {
       let valueWithoutDot = this.value.replace(/[.]/g, "");
       let valueWithoutComma = valueWithoutDot.replace(/[,]/, ".");
-      return parseFloat(valueWithoutComma);
+      return valueWithoutComma === "" ? "" : parseFloat(valueWithoutComma);
     },
     valueErrors() {
       let errors = [];
@@ -214,8 +207,8 @@ export default {
       if (!this.$v.targetAccountNumber.$dirty) return errors;
       !this.$v.targetAccountNumber.required &&
         errors.push("Valor é obrigatório");
-      !this.$v.targetAccountNumber.validValue &&
-        errors.push("Digite um valor válido");
+      // !this.$v.targetAccountNumber.validValue &&
+      //   errors.push("Digite um valor válido");
       !this.$v.targetAccountNumber.maxLength &&
         errors.push("Deve ter no máximo 6 dígitos");
       return errors;
@@ -225,8 +218,8 @@ export default {
       if (!this.$v.targetAccountAgency.$dirty) return errors;
       !this.$v.targetAccountAgency.required &&
         errors.push("Valor é obrigatório");
-      !this.$v.targetAccountAgency.validValue &&
-        errors.push("Digite um valor válido");
+      // !this.$v.targetAccountAgency.validValue &&
+      //   errors.push("Digite um valor válido");
       !this.$v.targetAccountAgency.maxLength &&
         errors.push("Deve ter no máximo 4 dígitos");
       return errors;
@@ -236,12 +229,12 @@ export default {
     value: { required },
     targetAccountNumber: {
       required,
-      validValue,
+      //validValue,
       maxLength: maxLength(6)
     },
     targetAccountAgency: {
       required,
-      validValue,
+      //validValue,
       maxLength: maxLength(4)
     }
   },
@@ -257,7 +250,7 @@ export default {
     },
 
     cleanModel() {
-      this.value = 0;
+      this.value = "";
       this.targetAccountNumber = 0;
       this.targetAccountAgency = 0;
     },
@@ -285,11 +278,11 @@ export default {
 
         const headers = this.getHeaders();
         let url = "";
-
+        debugger;
         let data = {
           accountNumber: this.account.accountNumber,
           agency: this.account.agency,
-          value: parseFloat(this.value)
+          value: parseFloat(this.valueConverted)
         };
 
         if (operation === "withdraw") {
@@ -306,7 +299,7 @@ export default {
               accountNumber: this.targetAccountNumber,
               agency: this.targetAccountAgency
             },
-            value: this.value
+            value: parseFloat(this.valueConverted)
           };
           url = "/accounts/transfer";
         }
@@ -318,6 +311,7 @@ export default {
         this.snackbar = true;
         this.colorSnackBar = "success";
         this.textSnackBar = "Operação realizada com sucesso";
+        debugger;
         this.cleanModel();
       } catch (error) {
         this.snackbar = true;
@@ -351,8 +345,7 @@ export default {
           this.operation = {
             name: "Transferência",
             buttonText: "Transferir",
-            type: "transfer",
-            value: this.value
+            type: "transfer"
           };
           break;
         case "statement":
