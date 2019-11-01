@@ -56,11 +56,14 @@ namespace StoneChallenge.Bank.API.Controllers
                     EmailConfirmed = true
                 };
 
-                var customer = await _customerAppService.GetByCpf(openAccount.Customer.Cpf);
-
-                if (customer != null)
+                if (await _customerAppService.GetByCpf(openAccount.Customer.Cpf) != null)
                 {
                     return Conflict("Já existe um cliente com o cpf informado");
+                }
+
+                if (await _userManager.FindByEmailAsync(openAccount.Email) != null)
+                {
+                    return Conflict("Já existe um cliente com o e-mail informado");
                 }
 
                 var result = await _userManager.CreateAsync(identityUser, openAccount.Password);

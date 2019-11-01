@@ -35,6 +35,8 @@ namespace StoneChallenge.Bank.Domain.Models
                 throw new ArgumentException("Conta destino é obrigatória");
             }
 
+            //ValidateNegativeValue(value);
+
             ApplyFee(TransactionType.Transfer);
 
             var valueWithFee = ValueWithFee(value);

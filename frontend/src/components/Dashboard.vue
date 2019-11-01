@@ -11,7 +11,9 @@
         Bem-vindo(a), {{ account.customerName }} :)
         <v-btn text color="red" @click="logOff">Sair</v-btn>
       </v-card-title>
+      <v-divider></v-divider>
       <v-card-text>
+        <p>agência: {{account.agency}}/conta: {{account.accountNumber}}</p>
         <span class="subtitle-1 font-regular">saldo em conta</span>
         <a
           class="seeStatement subtitle-1 font-weight-bold"
@@ -135,7 +137,7 @@
                 v-if="operation.type !== 'statement'"
                 color="green darken-1"
                 text
-                @click="submitOperation(operation.type)"
+                @click.prevent="handleSubmit(operation.type)"
                 :disabled="$v.value.$invalid"
               >{{ operation.buttonText }}</v-btn>
               <v-btn color="red darken-1" text @click="dialog = false;">Fechar</v-btn>
@@ -262,7 +264,7 @@ export default {
       };
     },
 
-    async submitOperation(operation) {
+    async handleSubmit(operation) {
       try {
         this.$v.$touch();
 

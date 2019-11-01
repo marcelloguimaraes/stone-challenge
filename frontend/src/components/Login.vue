@@ -8,6 +8,7 @@
     >{{ textSnackBar }}</v-snackbar>
     <v-card class="mx-auto" max-width="400">
       <v-card-title>Acesse sua conta</v-card-title>
+      <v-divider></v-divider>
       <form @submit.prevent="submit">
         <v-text-field
           v-model="email"
@@ -33,7 +34,7 @@
         >Entrar</v-btn>
       </form>
       <p class="text-center">
-        Não possui acesso?
+        Não possui?
         <router-link to="open-account">Abra uma conta</router-link>
       </p>
     </v-card>

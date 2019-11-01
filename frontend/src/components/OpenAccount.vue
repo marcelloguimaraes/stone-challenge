@@ -1,6 +1,6 @@
 <template>
   <v-container fluid>
-    <v-snackbar v-model="snackbar" :color="colorSnackBar" :timeout="snackBarTimeout" top>
+    <v-snackbar v-model="snackbar" :color="colorSnackBar" :timeout="snackBarTimeout" left>
       <p v-html="textSnackBar"></p>
     </v-snackbar>
     <v-card class="mx-auto" max-width="500">
@@ -9,10 +9,6 @@
           <v-icon large class="float-left">keyboard_arrow_left</v-icon>
         </router-link>Abrir conta
       </v-card-title>
-      <!-- <div class="d-flex justify-space-between">
-
-        <span class="text-center">Abrir conta <v-icon color="blue" class="material-icons">account_balance</v-icon> </span>
-      </div>-->
       <v-divider></v-divider>
       <v-form ref="form">
         <v-row>
@@ -100,7 +96,7 @@ export default {
     snackbar: false,
     colorSnackBar: "",
     textSnackBar: "",
-    snackBarTimeout: 2000,
+    snackBarTimeout: 6000,
     menu: false,
     email: "",
     password: "",
@@ -202,7 +198,6 @@ export default {
           params: { accountNumber: response.data.accountNumber }
         });
       } catch (error) {
-        this.snackBarTimeout = 60000;
         this.snackbar = true;
         this.colorSnackBar = "red";
         if (error.response) {

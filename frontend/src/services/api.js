@@ -2,7 +2,7 @@ import axios from "axios";
 import router from "../router";
 
 const api = axios.create({
-  baseURL: "https://localhost:5001/api"
+  baseURL: process.env.VUE_APP_ROOT_API
 });
 
 api.interceptors.response.use(null, error => {
