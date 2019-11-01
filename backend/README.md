@@ -13,7 +13,7 @@ WebApi REST in .NET Core 2.2 created for the stone challenge.
 - Visual Studio 2019
 - Swagger UI
 
-## Followsteps to run the project
+## Follow steps to run the project
 `$ cd stone-challenge/backend`
 
 `$ dotnet build StoneChallenge.Bank.API.sln`
