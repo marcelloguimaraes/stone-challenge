@@ -1,8 +1,8 @@
 # stone-challenge-bank-front
 
-Vuejs bank app created for the stone challenge.
+App em Vue.js criado para se comunicar e realizar as operações da api.
 
-## Technologies/libs used
+## Bibliotecas utilizadas
 [axios](https://github.com/axios/axios)
 
 [vue-currency-field](https://github.com/mazipan/vue-currency-filter)
@@ -17,14 +17,16 @@ Vuejs bank app created for the stone challenge.
 
 [vue-money](https://github.com/vuetifyjs/vuetify)
 
-## Followsteps to run the project
-## Install dependencies
+## Como rodar o projeto?
+Realize um `git clone` do repositório principal e dentro do diretório `frontend` rode os comandos abaixo.
+
+## Instalar dependências
 ```
 yarn install
 ```
 
-### Run the project local
+### Buildar e rodar o projeto
 ```
 yarn run serve
 ```
-You will be able to see the project running at http://localhost:8080
+O Projeto estará rodando na url http://localhost:8080
