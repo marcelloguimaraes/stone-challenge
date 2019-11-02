@@ -52,6 +52,7 @@
           <template v-slot:activator="{ on }">
             <v-text-field
               v-model="birthDate"
+              v-mask="dateMask"
               :error-messages="birthDateErrors"
               label="Data de Nascimento"
               persistent-hint
@@ -103,6 +104,7 @@ export default {
     agency: 0,
     cpf: "",
     mask: "###.###.###-##",
+    dateMask: "##/##/####",
     name: "",
     birthDate: vm.formatDate(new Date().toISOString().substr(0, 10))
   }),
