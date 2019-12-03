@@ -12,9 +12,6 @@ namespace StoneChallenge.Bank.Domain.Models
         public double Balance { get; set; } = 0;
         public string CustomerId { get; set; }
         public string UserId { get; set; }
-
-        [NotMapped]
-        private double _fee;
         public virtual List<Transaction> Transactions { get; set; } = new List<Transaction>();
         public virtual Customer Customer { get; set; }
 
@@ -32,88 +29,62 @@ namespace StoneChallenge.Bank.Domain.Models
         {
             if(targetAccount == null)
             {
-                throw new ArgumentException("Conta destino é obrigatória");
+                throw new ArgumentNullException(nameof(targetAccount), "Conta destino é obrigatória");
             }
 
-            ApplyFee(TransactionType.Transfer);
+            ValidateNegativeValue(value);
+            ValidateValueGreaterThanBalance(value);
 
-            var valueWithFee = ValueWithFee(value);
+            double fee = 1; // R$ 1,00 sobre o valor transferido
+            double valueWithFee = value + fee;
 
-            ValidateValueGreaterThanBalance(valueWithFee);
-
-            WithDraw(valueWithFee, isTransfering: true);
+            WithdrawValue(valueWithFee);
             
-            // Quando o depósito é chamado pela transferência deve enviar o valor sem a taxa, pois só quem paga a taxa é a conta origem
-            targetAccount.Deposit(value, isTransfering: true);
+            targetAccount.DepositValue(value);
 
-            AddTransaction(new Transaction(Guid.NewGuid().ToString(), TransactionType.Transfer, DateTime.Now, valueWithFee * -1, AccountId, $"para a conta {targetAccount.AccountNumber}"));
+            AddTransaction(new Transaction(Guid.NewGuid().ToString(), TransactionType.Transfer, DateTime.Now, -valueWithFee, AccountId, $"para a conta {targetAccount.AccountNumber}"));
             targetAccount.AddTransaction(new Transaction(Guid.NewGuid().ToString(), TransactionType.Transfer, DateTime.Now, value, targetAccount.AccountId, $"recebida da conta {AccountNumber}"));
         }
 
-        public void WithDraw(double value, bool isTransfering = false)
+        public void WithDraw(double value)
         {
             ValidateNegativeValue(value);
+            ValidateValueGreaterThanBalance(value);
 
-            if (!isTransfering)
-            {
-                ApplyFee(TransactionType.Withdraw);
-                value = ValueWithFee(value);
-                ValidateValueGreaterThanBalance(value);
-                AddTransaction(new Transaction(Guid.NewGuid().ToString(), TransactionType.Withdraw, DateTime.Now, value * -1, AccountId));
-            }
+            double fee = 4;  // R$ 4,00 sobre o valor sacado
 
+            double valueWithFee = value + fee;
+            AddTransaction(new Transaction(Guid.NewGuid().ToString(), TransactionType.Withdraw, DateTime.Now, -valueWithFee, AccountId));
 
+            WithdrawValue(valueWithFee);
+        }
+
+        public void WithdrawValue(double value)
+        {
             Balance -= value;
+        }
+
+
+        public void Deposit(double value)
+        {
+            ValidateNegativeValue(value);
+            double fee = value * 0.01; // 1% sobre o valor depositado
+            double valueWithFee = value - fee;
+            AddTransaction(new Transaction(Guid.NewGuid().ToString(), TransactionType.Deposit, DateTime.Now, valueWithFee, AccountId));
+            DepositValue(valueWithFee);
+        }
+
+        public void DepositValue(double value)
+        {
+            Balance += value;
         }
 
         private void ValidateValueGreaterThanBalance(double value)
         {
             if (value > Balance)
             {
-                throw new ArgumentException($"Valor com a taxa superior ao saldo atual. Taxa: R$ {_fee}");
+                throw new ArgumentException($"Valor com a taxa superior ao saldo atual");
             }
-        }
-
-        public void Deposit(double value, bool isTransfering = false)
-        {
-            ValidateNegativeValue(value);
-
-            double valueWithFee = 0;
-
-            if(!isTransfering)
-            {
-                ApplyFee(TransactionType.Deposit);
-                valueWithFee = value - (value * _fee);
-                AddTransaction(new Transaction(Guid.NewGuid().ToString(), TransactionType.Deposit, DateTime.Now, valueWithFee, AccountId));
-            }
-
-            // Se o depósito não estiver sendo chamado pela transferência(depósito comum)
-            // deve depositar com taxa, se não deposita sem a taxa
-            Balance += !isTransfering ? valueWithFee : value;
-        }
-
-        private void ApplyFee(TransactionType transactionType)
-        {
-            switch (transactionType)
-            {
-                case TransactionType.Deposit:
-                    _fee = 0.01; // 1% sobre o valor depositado
-                    break;
-                case TransactionType.Withdraw:
-                    _fee = 4; // R$ 4,00 sobre o valor sacado
-                    break;
-                case TransactionType.Transfer:
-                    _fee = 1; // R$ 1,00 sobre o valor transferido
-                    break;
-                default:
-                    _fee = 0;
-                    break;
-            }
-        }
-
-        private double ValueWithFee(double value)
-        {
-            return value + _fee;
         }
 
         private void ValidateNegativeValue(double value)
@@ -124,14 +95,15 @@ namespace StoneChallenge.Bank.Domain.Models
             }
         }
 
+        private int GenerateAccountNumber()
+        {
+            return new Random().Next(1, 999999);
+        }
+
         public virtual void AddTransaction(Transaction transaction)
         {
             Transactions.Add(transaction);
         }
 
-        private int GenerateAccountNumber()
-        {
-            return new Random().Next(1, 999999);
-        }
     }
 }

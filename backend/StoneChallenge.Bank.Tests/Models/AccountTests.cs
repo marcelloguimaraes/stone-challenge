@@ -40,10 +40,8 @@ namespace StoneChallenge.Bank.Tests.Models
                 Balance = 0
             };
 
-            var fee = 4;
-
             var resultMessage = Assert.Throws<ArgumentException>(() => account.WithDraw(20));
-            var expectedMessage = $"Valor com a taxa superior ao saldo atual. Taxa: R$ {fee}";
+            var expectedMessage = $"Valor com a taxa superior ao saldo atual";
             Assert.Equal(expectedMessage, resultMessage.Message);
         }
 
@@ -155,7 +153,7 @@ namespace StoneChallenge.Bank.Tests.Models
 
 
         [Fact]
-        public void Transfer_Given_NullTargetAccount_Then_ThrowArgumentException()
+        public void Transfer_Given_NullTargetAccount_Then_ThrowArgumentNullException()
         {
             var account = new Account("47a77e3a-4db7-44bc-aa01-bcab6b58e191	",
                                       3032,
@@ -163,9 +161,7 @@ namespace StoneChallenge.Bank.Tests.Models
 
             double value = 20;
 
-            var resultMessage = Assert.Throws<ArgumentException>(() => account.Transfer(null, value));
-            var expectedMessage = "Conta destino é obrigatória";
-            Assert.Equal(expectedMessage, resultMessage.Message);
+            Assert.Throws<ArgumentNullException>(() => account.Transfer(null, value));
         }
 
         [Fact]
